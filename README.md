@@ -66,63 +66,24 @@ C2
 Jump to second line, position 2
 
 ## Procedure:
- 1. click on STM 32 CUBE IDE, the following screen will appear 
- 
- <img src="https://user-images.githubusercontent.com/36288975/226189166-ac10578c-c059-40e7-8b80-9f84f64bf088.png" width=400 height=400>
 
- 2. click on FILE, click on new stm 32 project 
+Open a new STM32 Project.
 
-<img src="https://user-images.githubusercontent.com/36288975/226189215-2d13ebfb-507f-44fc-b772-02232e97c0e3.png" width=400 height=400>
-<img src="https://user-images.githubusercontent.com/36288975/226189230-bf2d90dd-9695-4aaf-b2a6-6d66454e81fc.png" width=400 height=400>
+Selecting GPIO Ports
+```
+PA0 ,PA1 ,PA2 ,PA3 ,PB0 ,PB1
+```
+-> GPIO Output
 
-3. select the target to be programmed  as shown below and click on next 
+generating the code.
 
-<img src="https://user-images.githubusercontent.com/36288975/226189280-ed5dcf1d-dd8d-43ae-815d-491085f4863b.png" width=400 height=400>
+Build Debug and Create 'hex file'.
 
-4.select the program name 
+Open a new Proteus Project.
 
-<img src="https://user-images.githubusercontent.com/36288975/226189316-09832a30-4d1a-4d4f-b8ad-2dc28f137711.png" width=400 height=400>
+Select Ports STM32F401RB and LCD 16*2
 
-5. corresponding ioc file will be generated automatically 
-
-<img src="https://user-images.githubusercontent.com/36288975/226189378-3abbdee2-0df6-470f-a3cd-79c74e3d3ad8.png" width=400 height=400>
-
-6.select the appropriate pins as gipo, in or out, USART or required options and configure 
-
-<img src="https://user-images.githubusercontent.com/36288975/226189403-f7179f1a-3eae-4637-826b-ab4ec35ba1e1.png" width=400 height=400>
-<img src="https://user-images.githubusercontent.com/36288975/226189425-2b2414ce-49b3-4b61-a260-c658cb2e4152.png" width=400 height=400>
-
-7.click on cntrl+S , automaticall C program will be generated 
-
-<img src="https://user-images.githubusercontent.com/36288975/226189443-8b43451d-0b14-47e4-a20b-cc09c6ad8458.png" width=400 height=400>
-<img src="https://user-images.githubusercontent.com/36288975/226189450-85ffa969-2ffb-4788-81e5-72d60fdda0f1.png" width=400 height=400>
-
-8. edit the program and as per required 
-
-<img src="https://user-images.githubusercontent.com/36288975/226189461-a573e62f-a109-4631-a250-a20925758fe0.png" width=400 height=400>
-
-9. Add necessary library files of LCD 16x2 , write the program and use project and build  
-
-<img src="https://user-images.githubusercontent.com/36288975/226189554-3f7101ac-3f41-48fc-abc7-480bd6218dec.png" width=400 height=400>
-
-10. once the project is bulild 
-
-<img src="https://user-images.githubusercontent.com/36288975/226189577-c61cc1eb-3990-4968-8aa6-aefffc766b70.png" width=400 height=400>
-
-11. click on debug option 
-
-<img src="https://user-images.githubusercontent.com/36288975/226189625-37daa9a3-62e9-42b5-a5ce-2ac63345905b.png" width=400 height=400>
-
-12.  Creating Proteus project and running the simulationWe are now at the last part of step by step guide on how to simulate STM32 project in Proteus.
-13. Create a new Proteus project and place STM32F40xx i.e. the same MCU for which the project was created in STM32Cube IDE. 
-14. After creation of the circuit as per requirement as shown below 
-
-<img src="https://user-images.githubusercontent.com/36288975/233856847-32bea88a-565f-4e01-9c7e-4f7ed546ddf6.png" width=400 height=400>
-
-14. Double click on the the MCU part to open settings. Next to the Program File option, give full path to the Hex file generated using STM32Cube IDE. Then set the external crystal frequency to 8M (i.e. 8 MHz). Click OK to save the changes.
-15. click on debug and simulate using simulation as shown below 
-
-<img src="https://user-images.githubusercontent.com/36288975/233856904-99eb708a-c907-4595-9025-c9dbd89b8879.png" width=400 height=400>
+Connect PA0 to D7 , PA1 to D6 , PA2 to D5 , PA3 to D5 , RS to PB0 and E to PB1.
 
 ## CIRCUIT DIAGRAM 
 
@@ -134,16 +95,53 @@ DEVELOPED BY: Preethi M
 REG.NO: 212222100037
 #include "main.h"
 #include "lcd.h"
-MX_GPIO_Init();
-  /* USER CODE BEGIN 2 */
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+int main(void)
+{
+  HAL_Init();
+  SystemClock_Config();
+  MX_GPIO_Init();
   Lcd_PortType ports[]={GPIOA,GPIOA,GPIOA,GPIOA};
   Lcd_PinType pins[]={GPIO_PIN_3,GPIO_PIN_2,GPIO_PIN_1,GPIO_PIN_0};
   Lcd_HandleTypeDef lcd;
-  lcd = Lcd_create(ports,pins,GPIOB,GPIO_PIN_0,GPIOB,GPIO_PIN_1,LCD_4_BIT_MODE);
-  Lcd_cursor(&lcd,0,0);
-  Lcd_string(&lcd,"Preethi M");
-  Lcd_cursor(&lcd,1,0);
-  Lcd_string(&lcd,"212222100037");
+  lcd=Lcd_create(ports, pins, GPIOB, GPIO_PIN_0, GPIOB, GPIO_PIN_1, LCD_4_BIT_MODE);
+
+  while (1)
+  {
+   Lcd_cursor(&lcd,0,1);
+   Lcd_string(&lcd,"Ian\n");
+   Lcd_cursor(&lcd,1,0);
+   Lcd_string(&lcd,"212222100037\n");
+   HAL_Delay(100);
+  }
+}
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, GPIO_PIN_RESET);
+
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1, GPIO_PIN_RESET);
+
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+}
+
 ```
 ## Output screen shots of proteus  :
 
